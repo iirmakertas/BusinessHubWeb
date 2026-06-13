@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusinessHub</title>
+    <link rel="stylesheet" href="styles.css?v=6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="i18n.js?v=21"></script>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1><i class="fas fa-store"></i> BusinessHub</h1>
+                <p>Antalya, Türkiye</p>
+                <p>+90 0555 555 55 55</p>
+            </div>
+            <nav class="main-nav">
+                <div class="hamburger-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" data-i18n="nav.home">Ana Sayfa</a></li>
+                    <li class="dropdown">
+                        <a href="urunler.html" onclick="localStorage.removeItem('ab_category_filter');"
+                            data-i18n="nav.products">Ürünler <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu" id="dynamic-nav-categories">
+                            <!-- Dinamik yüklenecek -->
+                            <li><a href="index.html#urunler">Yükleniyor...</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="index.html#hakkimizda" data-i18n="nav.about">Hakkımızda</a></li>
+                    <li><a href="firsatlar.html" data-i18n="nav.deals">Fırsatlar</a></li>
+                    <li><a href="index.html#iletisim" data-i18n="nav.contact">Bize Ulaşın</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="lang-toggle"
+                    style="display:flex; align-items:center; gap:5px; margin-right: 15px; cursor: pointer;">
+                    <span id="btn-tr" class="lang-btn active" onclick="changeLanguage('tr')"
+                        style="font-weight:bold; font-size: 0.9rem;">TR</span>
+                    <span>|</span>
+                    <span id="btn-en" class="lang-btn" onclick="changeLanguage('en')"
+                        style="font-weight:bold; font-size: 0.9rem;">EN</span>
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()"
+                    style="margin-right: 15px; cursor:pointer; font-size: 1.2rem;">
+                    <i id="theme-icon" class="fas fa-moon"></i>
+                </div>
+
+                <div class="auth-wrapper" onclick="toggleAuthModal()">
+                    <i class="fas fa-user"></i>
+                    <span class="auth-text" id="authText" data-i18n="auth.login">Giriş Yap</span>
+                </div>
+
+                <div class="fav-wrapper" onclick="window.location.href='favoriler.html'" title="Favorilerim">
+                    <i class="fas fa-heart"></i>
+                    <span class="sepet" data-i18n="auth.favorites">Favorilerim</span>
+                </div>
+                <div class="cart-wrapper" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="sepet" data-i18n="auth.cart">Sepetim</span>
+                    <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 data-i18n="hero.title">Modern E-Ticaret Platformuna Hoş Geldiniz</h2>
+                <p data-i18n="hero.desc">BusinessHub, modern e-ticaret altyapısını test etmek amacıyla kurulmuş bir
+                    portföy demo platformudur. Amacımız, kullanıcılara kesintisiz bir alışveriş deneyimi sunarken, güçlü
+                    yönetim panelimizle satıcı süreçlerini optimize etmektir. Platformumuz, en yeni web teknolojileri
+                    kullanılarak Responsive (mobil uyumlu) olarak tasarlanmış ve gerçek zamanlı veritabanı altyapısıyla
+                    desteklenmiştir.</p>
+                <a href="urunler.html" onclick="localStorage.removeItem('ab_category_filter');" class="btn-primary"
+                    data-i18n="hero.btn">Ürünlerimizi Keşfedin</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="urunler" class="categories">
+        <div class="container">
+            <h2 class="section-title" data-i18n="sec.categories">Ürün Kategorilerimiz</h2>
+            <div class="category-grid" data-dynamic-categories="true">
+                <!-- Kategoriler script.js?v=21 tarafından dinamik olarak yüklenecek -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="hakkimizda" class="about">
+        <div class="container">
+            <h2 class="section-title" data-i18n="nav.about">Hakkımızda</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p data-i18n="about.p1">BusinessHub, modern e-ticaret altyapısını test etmek amacıyla kurulmuş bir
+                        portföy demo platformudur. Amacımız, kullanıcılara kesintisiz bir alışveriş deneyimi sunarken,
+                        güçlü yönetim panelimizle satıcı süreçlerini optimize etmektir.</p>
+                    <p data-i18n="about.p2">Platformumuz, en yeni web teknolojileri kullanılarak Responsive (mobil
+                        uyumlu) olarak tasarlanmış ve gerçek zamanlı veritabanı altyapısıyla desteklenmiştir.</p>
+
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <p data-i18n="feat.1">Hızlı Altyapı</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <p data-i18n="feat.2">Güvenli Sistem</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <p data-i18n="feat.3">Dinamik Panel</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="https://placehold.co/800x600/1e3a8a/ffffff?text=BusinessHub" alt="BusinessHub Mağaza" width="100%" height="auto" style="border-radius:12px; box-shadow: 0 8px 32px rgba(30,58,138,0.25);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="iletisim" class="contact">
+        <div class="container">
+            <h2 class="section-title" data-i18n="nav.contact">Bize Ulaşın</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3 data-i18n="contact.address">Adres</h3>
+                            <p>Antalya, Türkiye</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3 data-i18n="contact.phone">Telefon</h3>
+                            <p>+90 0555 555 55 55</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3 data-i18n="contact.email">E-posta</h3>
+                            <p>demo@businesshub.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h3 data-i18n="contact.hours">Çalışma Saatleri</h3>
+                            <p data-i18n="contact.hours1">Pazartesi-Cumartesi: 08:30 - 20:30</p>
+                            <p data-i18n="contact.hours2">Pazar: 10:00 - 20:00</p>
+                            <h5 data-i18n="contact.hours3">Bayram ve özel günler sırasında çalışma saatleri değişebilir.
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <input type="text" placeholder="Adınız Soyadınız" data-i18n="form.name" required>
+                        <input type="email" placeholder="E-posta Adresiniz" data-i18n="form.email" required>
+                        <input type="tel" placeholder="Telefon Numaranız" data-i18n="form.phone">
+                        <textarea placeholder="Mesajınız" data-i18n="form.message" rows="5" required></textarea>
+                        <button type="submit" class="btn-primary" data-i18n="form.send">Gönder</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-store"></i> BusinessHub</h3>
+                    <p data-i18n="footer.desc">BusinessHub, modern e-ticaret altyapısını test etmek amacıyla kurulmuş
+                        bir portföy demo platformudur. Amacımız, kullanıcılara kesintisiz bir alışveriş deneyimi
+                        sunarken, güçlü yönetim panelimizle satıcı süreçlerini optimize etmektir.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer.links">Hızlı Linkler</h4>
+                    <ul>
+                        <li><a href="#home" data-i18n="nav.home">Ana Sayfa</a></li>
+                        <li><a href="urunler.html" onclick="localStorage.removeItem('ab_category_filter');"
+                                data-i18n="nav.products">Ürünler</a></li>
+                        <li><a href="#hakkimizda" data-i18n="nav.about">Hakkımızda</a></li>
+                        <li><a href="#iletisim" data-i18n="nav.contact">İletişim</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer.cats">Ürün Kategorileri</h4>
+                    <ul id="footer-dynamic-categories">
+                        <!-- Dinamik yüklenecek -->
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p><span data-i18n="footer.copyright">&copy; 2026 BusinessHub. Demo business management and e-commerce
+                        administration project created for portfolio purposes.</span> &nbsp;|&nbsp; <a
+                        href="admin-login.html"
+                        style="color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.8rem;"
+                        title="Yönetim Paneli" data-i18n="footer.admin">Yönetim Paneli</a></p>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Auth Modal -->
+    <div class="auth-modal-overlay" id="auth-modal">
+        <div class="auth-modal">
+            <button class="auth-close" onclick="toggleAuthModal()"><i class="fas fa-times"></i></button>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')" data-i18n="auth.tab.login">
+                    Giriş Yap</div>
+                <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')"
+                    data-i18n="auth.tab.register">Üye Ol</div>
+                <div class="auth-tab" id="tab-forgot" onclick="switchAuthTab('forgot')" style="display:none;"
+                    data-i18n="auth.forgot">Şifremi Unuttum</div>
+                <div class="auth-tab" id="tab-reset" onclick="switchAuthTab('reset')" style="display:none;">Şifre
+                    Yenileme</div>
+            </div>
+
+            <div class="auth-form active" id="form-login">
+                <h3 data-i18n="auth.welcome">Hoş Geldiniz</h3>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <input type="email" id="login-email" placeholder="E-posta Adresiniz" data-i18n="form.email"
+                        required>
+                    <input type="password" id="login-pass" placeholder="Şifreniz" data-i18n="auth.pass" required>
+                    <div style="text-align: right; margin-top: 5px; margin-bottom: 15px;">
+                        <a href="#" onclick="switchAuthTab('forgot'); return false;"
+                            style="color: #043d0f; font-size: 0.9rem; text-decoration: underline;"
+                            data-i18n="auth.forgot">Şifremi Unuttum</a>
+                    </div>
+                    <button type="submit" data-i18n="auth.btn.login">Giriş Yap</button>
+                </form>
+            </div>
+
+            <div class="auth-form" id="form-register">
+                <h3 data-i18n="auth.tab.register">Üye Ol</h3>
+                <form id="register-form" onsubmit="handleRegister(event)">
+                    <input type="text" id="reg-name" placeholder="Adınız Soyadınız" data-i18n="form.name" required>
+                    <input type="email" id="reg-email" placeholder="E-posta Adresiniz" data-i18n="form.email" required>
+                    <input type="password" id="reg-pass" placeholder="Şifre Belirleyin" required>
+                    <button type="submit" data-i18n="auth.btn.register">Üye Ol</button>
+                </form>
+            </div>
+
+            <div class="auth-form" id="form-forgot">
+                <h3 data-i18n="auth.forgot">Şifremi Unuttum</h3>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Şifrenizi sıfırlamak için kayıtlı
+                    e-posta adresinizi girin.</p>
+                <form id="forgot-form" onsubmit="handleForgotPassword(event)">
+                    <input type="email" id="forgot-email" placeholder="E-posta Adresiniz" data-i18n="form.email"
+                        required>
+                    <button type="submit">Şifre Sıfırlama Linki Gönder</button>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="#" onclick="switchAuthTab('login'); return false;"
+                            style="color: #043d0f; font-size: 0.9rem; text-decoration: underline;">Giriş ekranına
+                            dön</a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="auth-form" id="form-reset">
+                <h3>Yeni Şifre Belirle</h3>
+                <form id="reset-form" onsubmit="handlePasswordResetForm(event)">
+                    <input type="password" id="reset-new-pass" placeholder="Yeni Şifre" data-i18n="acc.pass.new"
+                        required>
+                    <button type="submit" data-i18n="acc.pass.btn">Şifreyi Güncelle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Panel -->
+    <div id="account-panel" class="account-panel">
+        <div class="account-header">
+            <h3 data-i18n="acc.header">Hesabım</h3>
+            <button class="close-account" onclick="toggleAccountPanel()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="account-tabs">
+            <div class="acc-tab active" id="tab-acc-info" onclick="switchAccTab('info')" data-i18n="acc.tab.info">
+                Bilgilerim</div>
+            <div class="acc-tab" id="tab-acc-orders" onclick="switchAccTab('orders')" data-i18n="acc.tab.orders">
+                Siparişlerim</div>
+        </div>
+        <div class="account-content">
+            <div class="acc-section active" id="section-acc-info">
+                <div class="acc-info-row">
+                    <label data-i18n="acc.name">Ad Soyad</label>
+                    <div id="acc-name-display">-</div>
+                </div>
+                <div class="acc-info-row">
+                    <label data-i18n="acc.email">E-posta</label>
+                    <div id="acc-email-display">-</div>
+                </div>
+
+                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #9333ea; border-bottom: 1px solid #eee; padding-bottom: 5px;"
+                    data-i18n="acc.contact">İletişim &amp; Adres Bilgileri</h4>
+                <form class="acc-form" onsubmit="handleContactUpdate(event)">
+                    <input type="tel" id="acc-phone" placeholder="Telefon Numaranız" data-i18n="acc.phone"
+                        pattern="[0-9\s\-\+\(\)]*">
+                    <textarea id="acc-address" placeholder="Teslimat Adresiniz" data-i18n="acc.address"
+                        style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; min-height: 80px; font-family: inherit;"></textarea>
+                    <button type="submit" style="background-color: #f2c94c; color: #333;" data-i18n="acc.save">Bilgileri
+                        Kaydet</button>
+                </form>
+
+                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #9333ea; border-bottom: 1px solid #eee; padding-bottom: 5px;"
+                    data-i18n="acc.pass.title">Şifre Yenileme</h4>
+                <form class="acc-form" onsubmit="handlePasswordUpdate(event)">
+                    <input type="password" id="acc-new-pass" placeholder="Yeni Şifre" data-i18n="acc.pass.new" required>
+                    <button type="submit" data-i18n="acc.pass.btn">Şifreyi Güncelle</button>
+                </form>
+
+                <div class="logout-btn-container">
+                    <button class="btn-logout" onclick="logout()" data-i18n="acc.logout">Hesaptan Çıkış Yap</button>
+                    <button class="btn-delete-account" onclick="deleteAccount()"
+                        style="background-color: transparent; color: #dc3545; border: 1px solid #dc3545; width: 100%; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; margin-top: 10px;"
+                        data-i18n="acc.delete">Hesabımı Sil</button>
+                </div>
+            </div>
+
+            <div class="acc-section" id="section-acc-orders">
+                <div style="text-align:center; padding: 40px 20px; color: #666;">
+                    <i class="fas fa-box-open"
+                        style="font-size: 3rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                    <p data-i18n="empty.orders">Henüz siparişiniz bulunmuyor.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sepet Paneli -->
+    <div id="cart-panel" class="cart-panel">
+        <div class="cart-header">
+            <h3 data-i18n="cart.header">Sepetim</h3>
+            <button class="close-cart" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItemsContainer">
+            <!-- Dinamik eklenecek -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span data-i18n="cart.subtotal">Ara Toplam:</span>
+                <span id="cartTotal">₺0,00</span>
+            </div>
+            <button class="btn-checkout" onclick="checkout()" data-i18n="cart.checkout">Ödemeye Geç</button>
+        </div>
+    </div>
+
+
+    <!-- Supabase JS Kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js?v=21"></script>
+
+    <script src="script.js?v=21"></script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "ankarabaharat",
+  "version": "1.0.0",
+  "description": "Ankara Baharat E-Ticaret ve Yönetim Paneli",
+  "scripts": {
+    "start": "node server_temp.js",
+    "dev": "node node_modules/http-server/bin/http-server -p 9000 -c-1"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

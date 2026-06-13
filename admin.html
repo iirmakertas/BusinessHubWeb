@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetim Paneli - BusinessHub</title>
+    <meta name="description" content="BusinessHub Yönetim Paneli - Ürün ve Kategori Yönetimi">
+    <link rel="stylesheet" href="admin.css?v=10000">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="admin-body">
+
+    <!-- Sidebar Overlay (Mobil) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="admin-layout">
+        <!-- ========== SIDEBAR ========== -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="brand" title="Siteye Dön">
+                    <i class="fas fa-store"></i>
+                    <div class="brand-text">
+                        <h2>BusinessHub</h2>
+                        <span data-i18n="admin.subtitle">Yönetim Paneli</span>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label" data-i18n="admin.mainmenu">Ana Menü</div>
+                <a class="nav-item active" data-section="dashboard" id="nav-dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span data-i18n="admin.dashboard">Dashboard</span>
+                </a>
+                <a class="nav-item" data-section="categories" id="nav-categories">
+                    <i class="fas fa-folder-open"></i>
+                    <span data-i18n="admin.categories">Kategoriler</span>
+                </a>
+                <a class="nav-item" data-section="products" id="nav-products">
+                    <i class="fas fa-box-open"></i>
+                    <span data-i18n="admin.products">Ürünler</span>
+                    <span class="badge" id="productCountBadge">0</span>
+                </a>
+                <a class="nav-item" data-section="deals" id="nav-deals">
+                    <i class="fas fa-tags"></i>
+                    <span data-i18n="admin.deals">Fırsatlar</span>
+                </a>
+                <a class="nav-item" data-section="orders" id="nav-orders">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span data-i18n="admin.orders">Siparişler</span>
+                    <span class="badge" id="orderCountBadge">0</span>
+                </a>
+                <a class="nav-item" data-section="reports" id="nav-reports">
+                    <i class="fas fa-flag"></i>
+                    <span data-i18n="admin.reports">Şikayetler</span>
+                    <span class="badge" id="reportCountBadge">0</span>
+                </a>
+
+                <div class="nav-label" data-i18n="admin.system">Sistem</div>
+                <a class="nav-item" data-section="settings" id="nav-settings">
+                    <i class="fas fa-cog"></i>
+                    <span data-i18n="admin.settings">Ayarlar</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a class="nav-item" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span data-i18n="admin.logout">Çıkış Yap</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="admin-main">
+            <!-- Top Bar -->
+            <div class="admin-topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1 id="pageTitle">Dashboard</h1>
+                        <p id="pageSubtitle">Genel bakış ve istatistikler</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <button class="site-link" onclick="toggleAdminTheme()" style="background:none; cursor:pointer;" id="adminThemeToggle" title="Temayı Değiştir">
+                        <i class="fas fa-moon" id="adminThemeIcon"></i>
+                    </button>
+                    <button class="site-link" onclick="toggleAdminLanguage()" style="background:none; cursor:pointer;" id="adminLangToggle" title="Dili Değiştir">
+                        <i class="fas fa-language"></i> <span id="adminLangText">TR</span>
+                    </button>
+                    <a href="index.html" class="site-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span data-i18n="admin.viewsite">Siteyi Görüntüle</span>
+                    </a>
+                    <div class="admin-avatar" title="Admin">A</div>
+                </div>
+            </div>
+
+            <div class="admin-content">
+
+                <!-- ====== DASHBOARD ====== -->
+                <div class="admin-section active" id="section-dashboard">
+                    <!-- İstatistik Kartları -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3 data-i18n="admin.totalproducts">Toplam Ürün</h3>
+                                <div class="stat-number" id="statProducts">0</div>
+                            </div>
+                            <div class="stat-icon green">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3 data-i18n="admin.categories">Kategoriler</h3>
+                                <div class="stat-number" id="statCategories">0</div>
+                            </div>
+                            <div class="stat-icon blue">
+                                <i class="fas fa-folder-open"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3 data-i18n="admin.activedeals">Aktif Fırsatlar</h3>
+                                <div class="stat-number" id="statDeals">0</div>
+                            </div>
+                            <div class="stat-icon orange">
+                                <i class="fas fa-tags"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3 data-i18n="admin.outofstock">Stokta Yok</h3>
+                                <div class="stat-number" id="statOutOfStock">0</div>
+                            </div>
+                            <div class="stat-icon red">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hızlı İşlemler -->
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="navigateTo('products'); setTimeout(()=>openProductModal(), 200);">
+                            <i class="fas fa-plus-circle"></i>
+                            <span data-i18n="admin.addnewproduct">Yeni Ürün Ekle</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="navigateTo('categories'); setTimeout(()=>openCategoryModal(), 200);">
+                            <i class="fas fa-folder-plus"></i>
+                            <span data-i18n="admin.addnewcategory">Yeni Kategori Ekle</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="navigateTo('deals'); setTimeout(()=>openDealModal(), 200);">
+                            <i class="fas fa-percentage"></i>
+                            <span data-i18n="admin.addnewdeal">Yeni Fırsat Ekle</span>
+                        </button>
+                    </div>
+
+                    <!-- Son Eklenen Ürünler -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2 data-i18n="admin.recentproducts"><i class="fas fa-clock"></i>&nbsp; Son Eklenen Ürünler</h2>
+                            <button class="btn btn-sm btn-secondary-admin" onclick="navigateTo('products')" data-i18n="admin.viewall">Tümünü Gör <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                        <div class="section-card-body">
+                            <div class="data-table-wrapper">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-i18n="admin.colproduct">Ürün</th>
+                                            <th data-i18n="admin.colcategory">Kategori</th>
+                                            <th data-i18n="admin.colprice">Fiyat</th>
+                                            <th data-i18n="admin.colstatus">Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentProductsTable">
+                                        <!-- JS ile doldurulacak -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====== KATEGORİLER ====== -->
+                <div class="admin-section" id="section-categories">
+                    <div class="section-card" style="margin-bottom: 24px;">
+                        <div class="section-card-header">
+                            <h2 data-i18n="admin.categories"><i class="fas fa-folder-open"></i>&nbsp; Kategoriler</h2>
+                            <div class="header-actions">
+                                <button class="btn btn-primary-admin" onclick="openCategoryModal()" data-i18n="admin.newcategory"><i class="fas fa-plus"></i> Yeni Kategori</button>
+                            </div>
+                        </div>
+                        <div class="section-card-body">
+                            <div class="category-admin-grid" id="categoryGrid">
+                                <!-- JS ile doldurulacak -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====== ÜRÜNLER ====== -->
+                <div class="admin-section" id="section-products">
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2 data-i18n="admin.productmanagement"><i class="fas fa-box-open"></i>&nbsp; Ürün Yönetimi</h2>
+                            <div class="header-actions">
+                                <button class="btn btn-primary-admin" onclick="openProductModal()" data-i18n="admin.newproduct"><i class="fas fa-plus"></i> Yeni Ürün</button>
+                            </div>
+                        </div>
+                        <div class="section-card-body">
+                            <div class="filter-bar">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="productSearch" placeholder="Ürün ara..." data-i18n="admin.searchplaceholder" oninput="filterProducts()">
+                                </div>
+                                <select class="filter-select" id="categoryFilter" onchange="filterProducts()">
+                                    <option value="" data-i18n="admin.allcategories">Tüm Kategoriler</option>
+                                </select>
+                                <select class="filter-select" id="stockFilter" onchange="filterProducts()">
+                                    <option value="" data-i18n="admin.allstatuses">Tüm Durumlar</option>
+                                    <option value="active" data-i18n="admin.statusinstock">Stokta Var</option>
+                                    <option value="inactive" data-i18n="admin.statusoutofstock">Stokta Yok</option>
+                                </select>
+                            </div>
+                            <div class="data-table-wrapper">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ürün</th>
+                                            <th>Kategori</th>
+                                            <th>Fiyat</th>
+                                            <th>Durum</th>
+                                            <th data-i18n="admin.colactions">İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="productsTable">
+                                        <!-- JS ile doldurulacak -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="empty-state" id="productsEmpty" style="display:none;">
+                                <i class="fas fa-box-open"></i>
+                                <h3 data-i18n="admin.productnotfound">Ürün bulunamadı</h3>
+                                <p data-i18n="admin.productnotfounddesc">Arama kriterlerinize uygun ürün yok veya henüz ürün eklenmemiş.</p>
+                                <button class="btn btn-primary-admin" onclick="openProductModal()" data-i18n="admin.addfirstproduct"><i class="fas fa-plus"></i> İlk Ürünü Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====== FIRSATLAR ====== -->
+                <div class="admin-section" id="section-deals">
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2 data-i18n="admin.dealmanagement"><i class="fas fa-tags"></i>&nbsp; Fırsat Yönetimi</h2>
+                            <div class="header-actions">
+                                <button class="btn btn-primary-admin" onclick="openDealModal()" data-i18n="admin.newdeal"><i class="fas fa-plus"></i> Yeni Fırsat</button>
+                            </div>
+                        </div>
+                        <div class="section-card-body">
+                            <div id="dealsList">
+                                <!-- JS ile doldurulacak -->
+                            </div>
+                            <div class="empty-state" id="dealsEmpty" style="display:none;">
+                                <i class="fas fa-tags"></i>
+                                <h3 data-i18n="admin.nodealsyet">Henüz fırsat yok</h3>
+                                <p data-i18n="admin.nodealsyetdesc">İndirimli ürünler ekleyerek müşterilerinizi cezbedebilirsiniz.</p>
+                                <button class="btn btn-primary-admin" onclick="openDealModal()" data-i18n="admin.addfirstdeal"><i class="fas fa-plus"></i> İlk Fırsatı Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====== SİPARİŞLER ====== -->
+                <div class="admin-section" id="section-orders">
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2 data-i18n="admin.ordermanagement"><i class="fas fa-shopping-cart"></i>&nbsp; Sipariş Yönetimi</h2>
+                        </div>
+                        <div class="section-card-body">
+                            <div class="data-table-wrapper">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-i18n="admin.colorderid">Sipariş ID</th>
+                                            <th data-i18n="admin.colcustomer">Müşteri</th>
+                                            <th data-i18n="admin.coldate">Tarih</th>
+                                            <th data-i18n="admin.coltotal">Tutar</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersTable">
+                                        <!-- JS ile doldurulacak -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====== ŞİKAYETLER ====== -->
+                <div class="admin-section" id="section-reports">
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2 data-i18n="admin.reportmanagement"><i class="fas fa-flag"></i>&nbsp; Şikayet Yönetimi</h2>
+                        </div>
+                        <div class="section-card-body">
+                            <div class="data-table-wrapper">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-i18n="admin.colreportedby">Şikayet Eden</th>
+                                            <th>Tarih</th>
+                                            <th data-i18n="admin.colcommenttext">Yorum Metni</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reportsTable">
+                                        <!-- JS ile doldurulacak -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====== AYARLAR ====== -->
+                <div class="admin-section" id="section-settings">
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2 data-i18n="admin.settings"><i class="fas fa-cog"></i>&nbsp; Site Ayarları</h2>
+                        </div>
+                        <div class="section-card-body">
+                            <form id="settingsForm">
+                                <div class="settings-section">
+                                    <h3 data-i18n="admin.storeinfo"><i class="fas fa-store"></i>&nbsp; Mağaza Bilgileri</h3>
+                                    <div class="form-group">
+                                        <label data-i18n="admin.storename">Mağaza Adı</label>
+                                        <input type="text" class="form-control" id="settingStoreName" value="BusinessHub">
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label data-i18n="admin.phone">Telefon</label>
+                                            <input type="tel" class="form-control" id="settingPhone" value="+1 (555) 123-4567">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="admin.email">E-posta</label>
+                                            <input type="email" class="form-control" id="settingEmail" value="demo@businesshub.com">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="admin.address">Adres</label>
+                                        <textarea class="form-control" id="settingAddress" rows="2">123 Business Ave, Tech District, City</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="settings-section">
+                                    <h3 data-i18n="admin.workinghours"><i class="fas fa-clock"></i>&nbsp; Çalışma Saatleri</h3>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label data-i18n="admin.weekdays">Hafta İçi / Cumartesi</label>
+                                            <input type="text" class="form-control" id="settingWeekdays" value="Pazartesi-Cumartesi: 08:30 - 20:30">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="admin.sunday">Pazar</label>
+                                            <input type="text" class="form-control" id="settingSunday" value="Pazar: 10:00 - 20:00">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="settings-section">
+                                    <h3 data-i18n="admin.socialmedia"><i class="fas fa-share-alt"></i>&nbsp; Sosyal Medya</h3>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label><i class="fab fa-facebook-f"></i>&nbsp; Facebook</label>
+                                            <input type="url" class="form-control" id="settingFacebook" placeholder="https://facebook.com/...">
+                                        </div>
+                                        <div class="form-group">
+                                            <label><i class="fab fa-instagram"></i>&nbsp; Instagram</label>
+                                            <input type="url" class="form-control" id="settingInstagram" placeholder="https://instagram.com/...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fab fa-whatsapp"></i>&nbsp; WhatsApp</label>
+                                        <input type="text" class="form-control" id="settingWhatsapp" placeholder="+90 5XX XXX XXXX">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary-admin">
+                                    <i class="fas fa-save"></i> <span data-i18n="admin.savesettings">Ayarları Kaydet</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /admin-content -->
+        </main>
+    </div><!-- /admin-layout -->
+
+    <!-- ========== MODALLER ========== -->
+
+    <!-- Ürün Ekleme/Düzenleme Modalı -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="productModalTitle" data-i18n="admin.newproducttitle">Yeni Ürün Ekle</h3>
+                <button class="modal-close" onclick="closeModal('productModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <input type="hidden" id="productEditId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><span data-i18n="admin.prodname_tr">Ürün Adı (TR)</span> <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="productName" placeholder="Ürün adını girin (TR)" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="admin.prodname_en">Ürün Adı (EN)</label>
+                            <input type="text" class="form-control" id="productNameEn" placeholder="Ürün adını girin (EN)">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="admin.brand">Marka</label>
+                            <input type="text" class="form-control" id="productBrand" placeholder="Örn: BusinessHub">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><span data-i18n="admin.colcategory">Kategori</span> <span class="required">*</span></label>
+                            <select class="form-control" id="productCategory" required>
+                                <option value="" data-i18n="admin.selectcategory">Kategori seçin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><span data-i18n="admin.prodprice">Fiyat (₺)</span> <span class="required">*</span></label>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol">₺</span>
+                                <input type="number" class="form-control" id="productPrice" placeholder="0.00" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="admin.proddesc_tr">Açıklama (TR)</label>
+                        <textarea class="form-control" id="productDescription" placeholder="Ürün açıklaması (TR)" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="admin.proddesc_en">Açıklama (EN)</label>
+                        <textarea class="form-control" id="productDescriptionEn" placeholder="Ürün açıklaması (EN)" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="admin.prodphoto">Ürün Fotoğrafı</label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <input type="file" id="productImageFile" accept="image/*" style="display:none;">
+                            <input type="hidden" id="productImage">
+                            <div class="file-upload-placeholder" id="uploadPlaceholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p data-i18n="admin.photoinstruction">Fotoğraf seçmek için tıklayın veya sürükleyip bırakın</p>
+                                <span data-i18n="admin.photoformat">JPG, PNG, WEBP - Maks. 5MB</span>
+                            </div>
+                            <div class="file-upload-preview" id="uploadPreview" style="display:none;">
+                                <img id="previewImg" src="" alt="Önizleme">
+                                <button type="button" class="preview-remove" id="removePreview" title="Fotoğrafı Kaldır">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="stock-checkbox">
+                            <input type="checkbox" id="productInStock" checked>
+                            <span class="stock-checkmark"></span>
+                            <span class="stock-text" data-i18n="admin.prodinstock">Stokta Mevcut</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary-admin" onclick="closeModal('productModal')" data-i18n="admin.cancel">İptal</button>
+                <button class="btn btn-primary-admin" onclick="saveProduct()" data-i18n="admin.save"><i class="fas fa-save"></i> Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategori Ekleme/Düzenleme Modalı -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="categoryModalTitle" data-i18n="admin.newcategorytitle">Yeni Kategori Ekle</h3>
+                <button class="modal-close" onclick="closeModal('categoryModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryEditId">
+                    <div class="form-group">
+                        <label><span data-i18n="admin.catname">Kategori Adı</span> <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="categoryName" placeholder="Kategori adını girin" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="admin.caticon">İkon (Font Awesome class)</span> <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="categoryIcon" placeholder="Örn: fas fa-pepper-hot" required>
+                        <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; display: block;">
+                            <i class="fas fa-info-circle"></i> Örnek ikonlar: fas fa-pepper-hot, fas fa-spa, fas fa-leaf, fas fa-capsules, fas fa-heart, fas fa-oil-can
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="admin.desc">Açıklama</label>
+                        <textarea class="form-control" id="categoryDescription" placeholder="Kategori açıklaması" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="admin.catslug">Sayfa Dosya Adı</label>
+                        <input type="text" class="form-control" id="categorySlug" placeholder="Örn: anasayfa.html#urunler">
+                        <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; display: block;">
+                            <i class="fas fa-info-circle"></i> Kategorinin yönlendirileceği sayfa adı
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary-admin" onclick="closeModal('categoryModal')" data-i18n="admin.cancel">İptal</button>
+                <button class="btn btn-primary-admin" onclick="saveCategory()" data-i18n="admin.save"><i class="fas fa-save"></i> Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fırsat Ekleme/Düzenleme Modalı -->
+    <div class="modal-overlay" id="dealModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="dealModalTitle" data-i18n="admin.newdealtitle">Yeni Fırsat Ekle</h3>
+                <button class="modal-close" onclick="closeModal('dealModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="dealForm">
+                    <input type="hidden" id="dealEditId">
+                    <div class="form-group">
+                        <label><span data-i18n="admin.selectproductlbl">Ürün Seçin</span> <span class="required">*</span></label>
+                        <select class="form-control" id="dealProduct" required>
+                            <option value="" data-i18n="admin.selectproduct">Ürün seçin</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><span data-i18n="admin.saleprice">İndirimli Fiyat (₺)</span> <span class="required">*</span></label>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol">₺</span>
+                                <input type="number" class="form-control" id="dealPrice" placeholder="0.00" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="admin.originalprice">Normal Fiyat (₺)</label>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol">₺</span>
+                                <input type="number" class="form-control" id="dealOriginalPrice" placeholder="0.00" step="0.01" min="0" readonly style="background: var(--bg); cursor: not-allowed;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="admin.startdate">Başlangıç Tarihi</label>
+                            <input type="date" class="form-control" id="dealStartDate">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="admin.enddate">Bitiş Tarihi</label>
+                            <input type="date" class="form-control" id="dealEndDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="stock-checkbox">
+                            <input type="checkbox" id="dealActive" checked>
+                            <span class="stock-checkmark"></span>
+                            <span class="stock-text" data-i18n="admin.dealactive">Fırsat Aktif</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary-admin" onclick="closeModal('dealModal')" data-i18n="admin.cancel">İptal</button>
+                <button class="btn btn-primary-admin" onclick="saveDeal()" data-i18n="admin.save"><i class="fas fa-save"></i> Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Silme Onay Modalı -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal" style="width: 420px;">
+            <div class="confirm-dialog">
+                <div class="confirm-icon">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h3 id="confirmTitle" data-i18n="admin.confirmtitle">Silmek istediğinize emin misiniz?</h3>
+                <p id="confirmMessage" data-i18n="admin.confirmdesc">Bu işlem geri alınamaz.</p>
+                <div class="confirm-actions">
+                    <button class="btn btn-secondary-admin" onclick="closeModal('confirmModal')" data-i18n="admin.cancel">İptal</button>
+                    <button class="btn btn-danger" id="confirmBtn" data-i18n="admin.delete"><i class="fas fa-trash"></i> Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    
+    <!-- Supabase JS Kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js?v=10000"></script>
+
+    <script src="admin.js?v=10000"></script>
+</body>
+</html>

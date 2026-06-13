@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ürünler - BusinessHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css?v=6">
+    <script src="i18n.js?v=21"></script>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1><i class="fas fa-store"></i> BusinessHub</h1>
+                <p>Antalya, Türkiye</p>
+                <p>+90 0555 555 55 55</p>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="hamburger-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" data-i18n="nav.home">Ana Sayfa</a></li>
+                    <li class="dropdown">
+                        <a href="urunler.html" onclick="localStorage.removeItem('ab_category_filter');" data-i18n="nav.products">Ürünler <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu" id="dynamic-nav-categories">
+                            <!-- Dinamik olarak script.js?v=21 tarafından doldurulacak -->
+                            <li><a href="index.html#urunler">Yükleniyor...</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="index.html#hakkimizda" data-i18n="nav.about">Hakkımızda</a></li>
+                    <li><a href="firsatlar.html" data-i18n="nav.deals">Fırsatlar</a></li>
+                    <li><a href="index.html#iletisim" data-i18n="nav.contact">Bize Ulaşın</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="lang-toggle" style="display:flex; align-items:center; gap:5px; margin-right: 15px; cursor: pointer;">
+                    <span id="btn-tr" class="lang-btn active" onclick="changeLanguage('tr')" style="font-weight:bold; font-size: 0.9rem;">TR</span>
+                    <span>|</span>
+                    <span id="btn-en" class="lang-btn" onclick="changeLanguage('en')" style="font-weight:bold; font-size: 0.9rem;">EN</span>
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()" style="margin-right: 15px; cursor:pointer; font-size: 1.2rem;">
+                    <i id="theme-icon" class="fas fa-moon"></i>
+                </div>
+
+                <div class="auth-wrapper" onclick="toggleAuthModal()" title="Giriş Yap / Üye Ol">
+                    <i class="fas fa-user"></i>
+                    <span class="auth-text" id="authText" data-i18n="auth.login">Giriş Yap</span>
+                </div>
+                
+                <div class="fav-wrapper" onclick="window.location.href='favoriler.html'" title="Favorilerim">
+                    <i class="fas fa-heart"></i>
+                    <span class="sepet" data-i18n="auth.favorites">Favorilerim</span>
+                </div>
+                <div class="cart-wrapper" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="sepet" data-i18n="auth.cart">Sepetim</span>
+                    <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="urunler-page" style="margin-top: 140px; min-height: 50vh;">
+        <div class="container">
+            <h2 class="section-title" id="urunler-page-title" data-i18n="nav.products">Ürünler</h2>
+            <div class="product-grid" id="urunler-page-grid">
+                <!-- script.js?v=21 render the products here based on filter -->
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">Ürünler yükleniyor...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-store"></i> BusinessHub</h3>
+                    <p data-i18n="footer.desc">BusinessHub, modern e-ticaret altyapısını test etmek amacıyla kurulmuş bir portföy demo platformudur.</p>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer.links">Hızlı Linkler</h4>
+                    <ul>
+                        <li><a href="index.html" data-i18n="nav.home">Ana Sayfa</a></li>
+                        <li><a href="urunler.html" onclick="localStorage.removeItem('ab_category_filter');" data-i18n="nav.products">Ürünler</a></li>
+                        <li><a href="index.html#hakkimizda" data-i18n="nav.about">Hakkımızda</a></li>
+                        <li><a href="index.html#iletisim" data-i18n="nav.contact">İletişim</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer.cats">Ürün Kategorileri</h4>
+                    <ul id="footer-dynamic-categories">
+                        <!-- Dinamik Yüklenecek -->
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p><span data-i18n="footer.copyright">&copy; 2026 BusinessHub. Portföy amaçlı oluşturulmuş demo işletme yönetimi ve e-ticaret yönetim projesi.</span> &nbsp;|&nbsp; <a href="admin-login.html" style="color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.8rem;" data-i18n="footer.admin">Yönetim Paneli</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="auth-modal-overlay" id="auth-modal">
+        <!-- Auth Modal Content from anasayfa.html -->
+        <div class="auth-modal">
+            <button class="auth-close" onclick="toggleAuthModal()"><i class="fas fa-times"></i></button>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')" data-i18n="auth.tab.login">Giriş Yap</div>
+                <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')" data-i18n="auth.tab.register">Üye Ol</div>
+                <div class="auth-tab" id="tab-forgot" onclick="switchAuthTab('forgot')" style="display:none;" data-i18n="auth.forgot">Şifremi Unuttum</div>
+                <div class="auth-tab" id="tab-reset" onclick="switchAuthTab('reset')" style="display:none;">Şifre Yenileme</div>
+            </div>
+            <div class="auth-form active" id="form-login">
+                <h3 data-i18n="auth.welcome">Hoş Geldiniz</h3>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <input type="email" id="login-email" placeholder="E-posta Adresiniz" data-i18n="form.email" required>
+                    <input type="password" id="login-pass" placeholder="Şifreniz" data-i18n="auth.pass" required>
+                    <button type="submit" data-i18n="auth.btn.login">Giriş Yap</button>
+                </form>
+            </div>
+            <div class="auth-form" id="form-register">
+                <h3 data-i18n="auth.tab.register">Üye Ol</h3>
+                <form id="register-form" onsubmit="handleRegister(event)">
+                    <input type="text" id="reg-name" placeholder="Adınız Soyadınız" data-i18n="form.name" required>
+                    <input type="email" id="reg-email" placeholder="E-posta Adresiniz" data-i18n="form.email" required>
+                    <input type="password" id="reg-pass" placeholder="Şifre Belirleyin" required>
+                    <button type="submit" data-i18n="auth.btn.register">Kayıt Ol</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Panel -->
+    <div id="account-panel" class="account-panel">
+        <div class="account-header">
+            <h3 data-i18n="acc.header">Hesabım</h3>
+            <button class="close-account" onclick="toggleAccountPanel()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="account-tabs">
+            <div class="acc-tab active" id="tab-acc-info" onclick="switchAccTab('info')" data-i18n="acc.tab.info">Bilgilerim</div>
+            <div class="acc-tab" id="tab-acc-orders" onclick="switchAccTab('orders')" data-i18n="acc.tab.orders">Siparişlerim</div>
+        </div>
+        <div class="account-content">
+            <div class="acc-section active" id="section-acc-info">
+                <div class="acc-info-row">
+                    <label data-i18n="acc.name">Ad Soyad</label>
+                    <div id="acc-name-display">-</div>
+                </div>
+                <div class="acc-info-row">
+                    <label data-i18n="acc.email">E-posta</label>
+                    <div id="acc-email-display">-</div>
+                </div>
+
+                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #9333ea; border-bottom: 1px solid #eee; padding-bottom: 5px;" data-i18n="acc.contact">İletişim &amp; Adres Bilgileri</h4>
+                <form class="acc-form" onsubmit="handleContactUpdate(event)">
+                    <input type="tel" id="acc-phone" placeholder="Telefon Numaranız" data-i18n="acc.phone" pattern="[0-9\s\-\+\(\)]*">
+                    <textarea id="acc-address" placeholder="Teslimat Adresiniz" data-i18n="acc.address" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; min-height: 80px; font-family: inherit;"></textarea>
+                    <button type="submit" style="background-color: #f2c94c; color: #333;" data-i18n="acc.save">Bilgileri Kaydet</button>
+                </form>
+
+                <h4 style="margin-top: 25px; margin-bottom: 15px; color: #9333ea; border-bottom: 1px solid #eee; padding-bottom: 5px;" data-i18n="acc.pass.title">Şifre Yenileme</h4>
+                <form class="acc-form" onsubmit="handlePasswordUpdate(event)">
+                    <input type="password" id="acc-new-pass" placeholder="Yeni Şifre" data-i18n="acc.pass.new" required>
+                    <button type="submit" data-i18n="acc.pass.btn">Şifreyi Güncelle</button>
+                </form>
+
+                <div class="logout-btn-container">
+                    <button class="btn-logout" onclick="logout()" data-i18n="acc.logout">Hesaptan Çıkış Yap</button>
+                    <button class="btn-delete-account" onclick="deleteAccount()" style="background-color: transparent; color: #dc3545; border: 1px solid #dc3545; width: 100%; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; margin-top: 10px;" data-i18n="acc.delete">Hesabımı Sil</button>
+                </div>
+            </div>
+
+            <div class="acc-section" id="section-acc-orders">
+                <div style="text-align:center; padding: 40px 20px; color: #666;">
+                    <i class="fas fa-box-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                    <p data-i18n="empty.orders">Henüz siparişiniz bulunmuyor.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sepet Paneli -->
+    <div id="cart-panel" class="cart-panel">
+        <div class="cart-header">
+            <h3 data-i18n="cart.header">Sepetim</h3>
+            <button class="close-cart" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItemsContainer"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span data-i18n="cart.subtotal">Ara Toplam:</span>
+                <span id="cartTotal">₺0,00</span>
+            </div>
+            <button class="btn-checkout" onclick="checkout()" data-i18n="cart.checkout">Ödemeye Geç</button>
+        </div>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js?v=21"></script>
+    <script src="script.js?v=21"></script>
+</body>
+</html>

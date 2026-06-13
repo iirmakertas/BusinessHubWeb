@@ -1,0 +1,24 @@
+# Test & Fix Scripts (geliştirme araçları)
+fix_*.js
+test_*.js
+add_*.js
+reset_*.js
+seed.js
+refactor_*.js
+translate_*.js
+update_*.js
+execute_*.js
+setup_*.js
+change_*.js
+remove_*.js
+cache_bust.js
+server_temp.js
+
+# Node
+node_modules/
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+*.log

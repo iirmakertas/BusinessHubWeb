@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetim Paneli Giriş - BusinessHub</title>
+    <meta name="description" content="BusinessHub Yönetim Paneli Giriş Sayfası">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="admin-body">
+    <div class="login-page">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="fas fa-store"></i>
+                <h1>BusinessHub</h1>
+                <p>Yönetim Paneli</p>
+            </div>
+
+            <div class="login-error" id="loginError">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Kullanıcı adı veya şifre hatalı!</span>
+            </div>
+
+            <form class="login-form" id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="username">Kullanıcı Adı</label>
+                    <input type="text" id="username" placeholder="Kullanıcı adınızı girin" required>
+                    <i class="fas fa-user input-icon"></i>
+                </div>
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" placeholder="Şifrenizi girin" required>
+                    <i class="fas fa-lock input-icon"></i>
+                </div>
+                <div class="remember-row">
+                    <label>
+                        <input type="checkbox" id="rememberMe">
+                        Beni hatırla
+                    </label>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>&nbsp; Giriş Yap
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Oturum kontrolü - zaten giriş yapılmışsa yönlendir
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        // Hatırla kontrolü
+        const savedUser = localStorage.getItem('rememberedUser');
+        if (savedUser) {
+            document.getElementById('username').value = savedUser;
+            document.getElementById('rememberMe').checked = true;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('rememberMe').checked;
+            const errorDiv = document.getElementById('loginError');
+
+            // Varsayılan giriş bilgileri
+            if (username === 'admin' && password === 'ankara2024') {
+                // Başarılı giriş
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                
+                if (remember) {
+                    localStorage.setItem('rememberedUser', username);
+                } else {
+                    localStorage.removeItem('rememberedUser');
+                }
+
+                // Başarı animasyonu
+                const btn = document.querySelector('.login-btn');
+                btn.innerHTML = '<i class="fas fa-check"></i>&nbsp; Giriş Başarılı!';
+                btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 600);
+            } else {
+                // Hatalı giriş
+                errorDiv.classList.add('show');
+                // Shake animasyonu tetikle
+                errorDiv.style.animation = 'none';
+                errorDiv.offsetHeight; // reflow
+                errorDiv.style.animation = 'shakeError 0.5s ease-in-out';
+                
+                setTimeout(() => {
+                    errorDiv.classList.remove('show');
+                }, 4000);
+            }
+        });
+    </script>
+</body>
+</html>
