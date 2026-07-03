@@ -1223,8 +1223,8 @@ function compressAndLoadImage(file, callback) {
             let height = img.height;
             
             // Max dimensions for e-commerce catalog image
-            const MAX_WIDTH = 500;
-            const MAX_HEIGHT = 500;
+            const MAX_WIDTH = 400;
+            const MAX_HEIGHT = 400;
             
             if (width > height) {
                 if (width > MAX_WIDTH) {
@@ -1244,8 +1244,8 @@ function compressAndLoadImage(file, callback) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             
-            // Compress to JPEG with 0.7 quality to stay well under 50KB
-            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            // Compress to JPEG with 0.6 quality to stay well under 30KB
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
             callback(compressedBase64);
         };
         img.onerror = function() {

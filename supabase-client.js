@@ -195,28 +195,53 @@ function ensureMockDatabase() {
         try {
             const db = JSON.parse(existing);
             // Temel tabloların var olduğunu kontrol et
-            if (db && db.categories && db.products) {
-                // Migration: Replace old anasayfa.html references in categories slug
+            if (db && typeof db === 'object') {
                 let migrated = false;
-                db.categories.forEach(cat => {
-                    if (cat.slug && cat.slug.includes('anasayfa.html')) {
-                        cat.slug = cat.slug.replace('anasayfa.html', 'index.html');
-                        migrated = true;
-                    }
-                });
-                if (migrated) {
-                    localStorage.setItem(MOCK_DB_KEY, JSON.stringify(db));
+                
+                if (Array.isArray(db.categories)) {
+                    // Migration: Replace old anasayfa.html references in categories slug
+                    db.categories.forEach(cat => {
+                        if (cat.slug && typeof cat.slug === 'string' && cat.slug.includes('anasayfa.html')) {
+                            cat.slug = cat.slug.replace('anasayfa.html', 'index.html');
+                            migrated = true;
+                        }
+                    });
+                } else {
+                    db.categories = DEFAULT_CATEGORIES;
+                    migrated = true;
+                }
+
+                if (!Array.isArray(db.products)) {
+                    db.products = DEFAULT_PRODUCTS;
+                    migrated = true;
                 }
 
                 // Eksik tabloları ekle (yapı bütünlüğü kontrolü)
-                if (!db.reviews) db.reviews = DEFAULT_REVIEWS;
-                if (!db.orders) db.orders = DEFAULT_ORDERS;
-                if (!db.reports) db.reports = DEFAULT_REPORTS;
-                if (!db.deals) db.deals = DEFAULT_DEALS;
+                if (!Array.isArray(db.reviews)) {
+                    db.reviews = DEFAULT_REVIEWS;
+                    migrated = true;
+                }
+                if (!Array.isArray(db.orders)) {
+                    db.orders = DEFAULT_ORDERS;
+                    migrated = true;
+                }
+                if (!Array.isArray(db.reports)) {
+                    db.reports = DEFAULT_REPORTS;
+                    migrated = true;
+                }
+                if (!Array.isArray(db.deals)) {
+                    db.deals = DEFAULT_DEALS;
+                    migrated = true;
+                }
+
+                if (migrated) {
+                    localStorage.setItem(MOCK_DB_KEY, JSON.stringify(db));
+                }
                 return db;
             }
         } catch (e) {
-            // JSON bozuk, yeniden oluştur
+            console.error('[MockDB] Database load/migration error:', e);
+            // JSON tamamen bozuk değilse veya kurtarılabiliyorsa sıfırlama yapma
         }
     }
     // Yeni veritabanı oluştur
