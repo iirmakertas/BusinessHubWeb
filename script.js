@@ -334,7 +334,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         `).join('');
         
         // Yeni oluşturulan category-card'lara animasyonu uygula ve tetikle
-        requestAnimationFrame(() => animateOnScroll());
+        // Çift çağrı: ilk çağrı hazırlar, ikincisi görünür yapar
+        requestAnimationFrame(() => {
+            animateOnScroll();
+            requestAnimationFrame(() => animateOnScroll());
+        });
     });
 
     // 3. HEADER/FOOTER KATEGORİ MENÜLERİNİ DOLDUR
@@ -511,8 +515,20 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAuthStatus();
 });
 
-window.addEventListener('languageChanged', () => {
+window.addEventListener('languageChanged', (e) => {
     checkAuthStatus();
+    // Dil değişince kategori kartlarının animasyonunu sıfırla ve görünür yap
+    const categoryCards = document.querySelectorAll('.category-card');
+    categoryCards.forEach(card => {
+        card.style.opacity = 1;
+        card.style.transform = 'translateY(0)';
+        card.dataset.animated = 'true';
+    });
+    // Ürün detay sayfasında içerikleri yeniden yükle
+    if (window.location.pathname.includes('urun-detay')) {
+        const productId = localStorage.getItem('ab_current_product');
+        if (productId) loadProductDetails(productId);
+    }
 });
 
 // ============================================
@@ -726,12 +742,102 @@ function toggleAccountPanel() {
     }
 }
 
-function switchAccTab(tabName) {
+async function switchAccTab(tabName) {
     document.querySelectorAll('.acc-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.acc-section').forEach(s => s.classList.remove('active'));
     
-    document.getElementById('tab-acc-' + tabName).classList.add('active');
-    document.getElementById('section-acc-' + tabName).classList.add('active');
+    const tabEl = document.getElementById('tab-acc-' + tabName);
+    const secEl = document.getElementById('section-acc-' + tabName);
+    if (tabEl) tabEl.classList.add('active');
+    if (secEl) secEl.classList.add('active');
+    
+    if (tabName === 'orders') {
+        await loadUserOrders();
+    }
+}
+
+async function loadUserOrders() {
+    const container = document.getElementById('section-acc-orders');
+    if (!container) return;
+    
+    const { data: { session } } = await _supabase.auth.getSession();
+    if (!session || !session.user) {
+        container.innerHTML = '<div style="text-align:center; padding: 40px 20px; color: #666;"><p>Lütfen giriş yapın.</p></div>';
+        return;
+    }
+    
+    container.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary);"></i>
+            <p style="margin-top: 10px;">Siparişleriniz yükleniyor...</p>
+        </div>
+    `;
+    
+    try {
+        const { data: orders, error } = await _supabase.from('orders').select('*').eq('user_email', session.user.email);
+        
+        if (error || !orders || orders.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; padding: 40px 20px; color: #666;">
+                    <i class="fas fa-box-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                    <p data-i18n="empty.orders">Henüz siparişiniz bulunmuyor.</p>
+                </div>
+            `;
+            if (typeof changeLanguage === 'function') {
+                changeLanguage(localStorage.getItem('ab_lang') || 'tr', true);
+            }
+            return;
+        }
+        
+        // Siparişleri tarihe göre azalan sırada sıralayalım
+        orders.sort((a, b) => new Date(b.created_at || b.createdat) - new Date(a.created_at || a.createdat));
+        
+        const lang = localStorage.getItem('ab_lang') || 'tr';
+        const isEn = lang === 'en';
+        
+        let html = '<div class="user-orders-list" style="display:flex; flex-direction:column; gap:15px; max-height: 380px; overflow-y: auto; padding-right: 5px;">';
+        orders.forEach(order => {
+            const date = new Date(order.created_at || order.createdat).toLocaleDateString(isEn ? 'en-US' : 'tr-TR');
+            const total = parseFloat(order.total_price).toFixed(2) + ' ₺';
+            const statusText = order.status === 'Bekliyor' ? (isEn ? 'Pending' : 'Bekliyor') : (isEn ? 'Shipped' : 'Kargolandı');
+            const badgeClass = order.status === 'Bekliyor' ? 'badge-warning' : 'badge-success';
+            const badgeColor = order.status === 'Bekliyor' ? '#f2c94c' : '#22c55e';
+            
+            let items = [];
+            try {
+                items = JSON.parse(order.items || '[]');
+            } catch(e) {}
+            
+            const itemsHtml = items.map(item => `
+                <div class="user-order-item" style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted); margin-bottom:4px;">
+                    <span>${item.qty}x ${item.name}</span>
+                    <span>₺${(item.price * item.qty).toFixed(2)}</span>
+                </div>
+            `).join('');
+            
+            html += `
+                <div class="user-order-card" style="border:1px solid var(--border); border-radius:8px; padding:12px; background:var(--bg-light);">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:6px; font-weight:bold; font-size:0.85rem;">
+                        <span>Sipariş #${order.id}</span>
+                        <span class="badge ${badgeClass}" style="padding:2px 8px; border-radius:4px; font-size:0.75rem; color:#fff; background-color:${badgeColor}">${statusText}</span>
+                    </div>
+                    <div style="margin-bottom:6px;">
+                        ${itemsHtml}
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:bold; border-top:1px dashed var(--border); padding-top:6px;">
+                        <span style="color:var(--text-muted); font-weight:normal;">${date}</span>
+                        <span>Toplam: ${total}</span>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+        
+    } catch(e) {
+        console.error('Siparişler yüklenirken hata:', e);
+        container.innerHTML = '<p style="text-align:center; padding:20px; color:#ff4d4f;">Siparişler yüklenirken bir hata oluştu.</p>';
+    }
 }
 
 async function handlePasswordUpdate(e) {
@@ -853,9 +959,11 @@ async function loadProductDetails(productId) {
             `;
         }
 
-        let buttonHtml = `<button class="add-to-cart-large" onclick="addToCart('${product.id}')"><i class="fas fa-shopping-cart"></i> SEPETE EKLE</button>`;
+        const cartBtnText = lang === 'en' ? 'ADD TO CART' : 'SEPETE EKLE';
+        const noStockText = lang === 'en' ? 'OUT OF STOCK' : 'STOKTA YOK';
+        let buttonHtml = `<button class="add-to-cart-large" onclick="addToCart('${product.id}')" data-i18n="detail.addcart"><i class="fas fa-shopping-cart"></i> ${cartBtnText}</button>`;
         if (!product.instock) {
-            buttonHtml = `<button class="add-to-cart-large" disabled style="background-color: #9ca3af; cursor: not-allowed;">STOKTA YOK</button>`;
+            buttonHtml = `<button class="add-to-cart-large" disabled style="background-color: #9ca3af; cursor: not-allowed;" data-i18n="detail.nostock">${noStockText}</button>`;
         }
 
         const imageSrc = product.image || 'https://placehold.co/500x500?text=Resim+Yok';

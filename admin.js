@@ -309,6 +309,26 @@ function getProductById(productId) {
     return getProducts().find(p => p.id === productId);
 }
 
+function getProductDisplayDetails(product) {
+    const lang = localStorage.getItem('ab_admin_lang') || 'tr';
+    let name = product.name;
+    let description = product.description || '';
+    try {
+        if (description && description.startsWith('{')) {
+            const parsed = JSON.parse(description);
+            if (parsed.tr !== undefined) {
+                if (lang === 'en' && parsed.en) {
+                    name = (typeof parsed.en === 'object' ? parsed.en.name : parsed.en) || name;
+                    description = (typeof parsed.en === 'object' ? parsed.en.description : parsed.tr) || parsed.tr;
+                } else {
+                    description = parsed.tr;
+                }
+            }
+        }
+    } catch(e) {}
+    return { name, description };
+}
+
 function getTodayStr() {
     return new Date().toISOString().split('T')[0];
 }
@@ -521,14 +541,16 @@ function renderDashboard() {
         return;
     }
 
-    tbody.innerHTML = recentProducts.map(p => `
+    tbody.innerHTML = recentProducts.map(p => {
+        const { name, description } = getProductDisplayDetails(p);
+        return `
         <tr>
             <td>
                 <div class="product-cell">
-                    <img src="${p.image || 'https://placehold.co/44x44?text=Ürün'}" alt="${p.name}" class="product-thumb" onerror="this.src='https://placehold.co/44x44?text=Ürün'">
+                    <img src="${p.image || 'https://placehold.co/44x44?text=Ürün'}" alt="${escapeHtml(name)}" class="product-thumb" onerror="this.src='https://placehold.co/44x44?text=Ürün'">
                     <div>
-                        <div class="product-name">${escapeHtml(p.name)}</div>
-                        <div class="product-desc">${escapeHtml(p.description || '')}</div>
+                        <div class="product-name">${escapeHtml(name)}</div>
+                        <div class="product-desc">${escapeHtml(description || '')}</div>
                     </div>
                 </div>
             </td>
@@ -536,7 +558,8 @@ function renderDashboard() {
             <td><strong>${formatPrice(p.price)}</strong></td>
             <td><span class="status-badge ${p.instock ? 'active' : 'inactive'}">${p.instock ? (isEn ? 'In Stock' : 'Stokta') : (isEn ? 'Out of Stock' : 'Tükendi')}</span></td>
         </tr>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function animateCounter(elementId, targetValue) {
@@ -723,6 +746,7 @@ function filterProducts() {
     } else {
         emptyState.style.display = 'none';
         tbody.innerHTML = products.map(p => {
+            const { name, description } = getProductDisplayDetails(p);
             // Aktif fırsat kontrolü
             const activeDeal = deals.find(d => 
                 d.productid === p.id && 
@@ -749,12 +773,12 @@ function filterProducts() {
             <tr>
                 <td>
                     <div class="product-cell">
-                        <img src="${p.image || 'https://placehold.co/44x44?text=Ürün'}" alt="${escapeHtml(p.name)}" class="product-thumb" onerror="this.src='https://placehold.co/44x44?text=Ürün'">
+                        <img src="${p.image || 'https://placehold.co/44x44?text=Ürün'}" alt="${escapeHtml(name)}" class="product-thumb" onerror="this.src='https://placehold.co/44x44?text=Ürün'">
                         <div>
                             <div class="product-name" style="display: flex; align-items: center;">
-                                ${escapeHtml(p.name)} ${badgeHtml}
+                                ${escapeHtml(name)} ${badgeHtml}
                             </div>
-                            <div class="product-desc">${escapeHtml(p.description || '')}</div>
+                            <div class="product-desc">${escapeHtml(description || '')}</div>
                         </div>
                     </div>
                 </td>
